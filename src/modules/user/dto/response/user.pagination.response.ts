@@ -1,13 +1,24 @@
-import { IsInt, IsOptional, Min } from 'class-validator';
+import { IsIn, IsInt, IsOptional, IsString, Min } from 'class-validator';
 
 export class UserPaginationDTO {
-    @IsOptional()
-    @IsInt()
-    @Min(1)
-    readonly page?: number = 1;
-  
-    @IsOptional()
-    @IsInt()
-    @Min(1)
-    readonly limit?: number = 10;
-  }
+  @IsOptional()
+  @IsString()
+  readonly page?: number;
+
+  @IsOptional()
+  @IsString()
+  readonly size?: number;
+
+  @IsOptional()
+  @IsString()
+  readonly sort?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['asc', 'desc'], { message: 'order deve ser "asc" ou "desc"' })
+  readonly order?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly search?: string;
+}

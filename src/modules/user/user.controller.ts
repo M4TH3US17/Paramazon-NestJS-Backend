@@ -19,7 +19,9 @@ export class UserController {
     @ApiResponse({ status: HttpStatus.OK })
     public async findAll(@Query() pagination: UserPaginationDTO): Promise<UserResponse[]> {
         this.logger.log(`UserController :: Iniciando processo de busca de todos os usuarios cadastrados...`);
-        const response = this.service.findAll(pagination);
+        const { page = 1, size = 10, sort = 'username', order = 'asc', search = '' } = pagination;
+        const response = this.service.findAll({ page, size, sort, order, search });
+        
         return response;
     };
 
