@@ -14,7 +14,6 @@ export class UserService {
   public async findAll(pagination: UserPaginationDTO): Promise<UserResponse[]> {
     try {
       this.logger.log('UserService :: Iniciando a consulta na base de dados...');
-
       const list = await this.repository.findAll(pagination);
 
       console.log(list)

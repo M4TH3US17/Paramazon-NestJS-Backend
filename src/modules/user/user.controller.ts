@@ -1,8 +1,9 @@
-import { Controller, Get, HttpStatus, Logger, Query } from "@nestjs/common";
+import { Controller, Get, HttpStatus, Logger, Query, UsePipes } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UserService } from "./user.service";
 import { UserResponse } from "./dto/response/user.dto";
 import { UserPaginationDTO } from "./dto/response/user.pagination.response";
+import { ValidateUserPaginationPipe } from "./pipes/validate-user-pagination.pipe";
 
 @ApiTags('usuarios')
 @Controller("users")
@@ -15,6 +16,7 @@ export class UserController {
     ) { }
 
     @Get()
+    @UsePipes(ValidateUserPaginationPipe)
     @ApiOperation({ summary: 'Retorna todos os usuarios cadastrados no sistema' })
     @ApiResponse({ status: HttpStatus.OK })
     public async findAll(@Query() pagination: UserPaginationDTO): Promise<UserResponse[]> {
