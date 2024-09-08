@@ -1,0 +1,14 @@
+{
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "admin",
+    "database": "paramazon",
+    "entities": ["dist/**/*.entity{.ts,.js}"],
+    "migrations": ["dist/migration/*.js"],
+    "cli": {
+      "migrationsDir": "prisma/migration"
+    }
+  }
+  
