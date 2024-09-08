@@ -1,17 +1,15 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { UserResponse } from "./dto/response/user.dto";
-import { Repository } from "typeorm";
-import { UserEntity } from "./entity/user.entity";
+//import { UserEntity } from "./entity/user.entity";
 import { UserPaginationDTO } from "./dto/response/user.pagination.response";
-import { InjectRepository } from "@nestjs/typeorm";
+import { PrismaService } from "src/database/prisma/prisma.service";
 
 @Injectable()
 export class UserService {
     private readonly logger = new Logger(UserService.name);
 
     constructor(
-        @InjectRepository(UserEntity)
-        private readonly repository: Repository<UserEntity>,
+      private readonly prisma: PrismaService,
     ) { }
 
     public async findAll(pagination: UserPaginationDTO): Promise<UserResponse[]> {
@@ -23,11 +21,21 @@ export class UserService {
     
         try {
           this.logger.log('UserService :: Iniciando a consulta na base de dados...');
-          const list = await this.repository.find({ skip, take: limit });
+          
+          const list = await this.prisma.user.findMany({
+            skip,
+            take: limit,
+            where: {
+              account_status: 'ACTIVE'
+            },
+            //include: { photograph: true },
+          });
+
+          console.log(list)
     
           this.logger.log(`UserService :: ${list.length} usuário(s) encontrado(s). Enviando dados para o client-side...`);
     
-          return list;
+          return [];
         } catch (error) {
           this.logger.error('UserService :: Erro ao buscar usuários', error.stack);
           throw error;

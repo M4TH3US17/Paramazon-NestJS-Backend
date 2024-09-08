@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// MODELS
+model Media {
+  media_id   BigInt    @id @default(autoincrement())
+  source     String
+  media_type MediaType @default(OTHER)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  User User[] @relation("UserMedia")
+
+  @@map("medias")
+}
+
+model User {
+  user_id        BigInt   @id @default(autoincrement())
+  username       String   @unique
+  password       String
+  user_role      Role     @default(USER)
+  account_status Status   @default(ACTIVE)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  photograph    Media?  @relation(fields: [photograph_fk], references: [media_id], name: "UserMedia")
+  photograph_fk BigInt?
+
+  @@map("users")
+}
+
+// ENUMS
+enum Role {
+  USER
+  ADMIN
+}
+
+enum MediaType {
+  JPG
+  PNG
+  SVG
+  MP4
+  OTHER
+}
+
+enum Status {
+  INACTIVE
+  ACTIVE
+}
