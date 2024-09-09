@@ -9,7 +9,7 @@ export class ValidateUserPaginationPipe implements PipeTransform {
         const pageNumber = Number(page);
         const sizeNumber = Number(size);
 
-        if (isNaN(pageNumber) || pageNumber <= 0)
+        if (isNaN(pageNumber) || pageNumber < 0)
             throw new BadRequestException(`Page must be a number greater than 0. (page=${page})`);
 
         if (isNaN(sizeNumber) || sizeNumber <= 0)

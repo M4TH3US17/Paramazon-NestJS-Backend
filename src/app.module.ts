@@ -12,4 +12,4 @@ import { PrismaModule } from './database/prisma/prisma.module';
   ],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }
