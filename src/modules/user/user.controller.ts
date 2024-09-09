@@ -4,7 +4,6 @@ import { UserService } from "./user.service";
 import { UserPaginationDTO } from "./dto/response/user.pagination.response";
 import { ValidateUserPaginationPipe } from "./pipes/validate-user-pagination.pipe";
 import { UserRequestDTO } from "./dto/request/user.create.dto";
-import { IUserResponse } from "./dto/response/user.dto";
 
 @ApiTags('usuarios')
 @Controller("users")

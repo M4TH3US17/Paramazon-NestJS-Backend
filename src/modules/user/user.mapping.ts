@@ -1,11 +1,11 @@
 import { InternalServerErrorException, Logger } from "@nestjs/common";
-import { IUserResponse } from "./dto/response/user.dto";
+import { UserResponse } from "./dto/response/user.dto";
 
 export class UserMapper {
 
     constructor(){}
 
-    public static parseEntitiesToDTO(entities: any[]): IUserResponse[] {
+    public static parseEntitiesToDTO(entities: any[]): UserResponse[] {
         try {
             return entities.map(entity => this.parseToDTO(entity));
         } catch (error) {
@@ -14,9 +14,9 @@ export class UserMapper {
         }
     }
 
-    public static parseToDTO(entity: any): IUserResponse {
+    public static parseToDTO(entity: any): UserResponse {
         try {
-            const dto: IUserResponse = {
+            const dto: UserResponse = {
                 user_id: Number(entity.user_id),
                 username: entity.username,
                 user_role: entity.user_role,
