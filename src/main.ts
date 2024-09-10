@@ -5,16 +5,18 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
+  
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+
+  const port = configService.get<number>('SERVER_PORT');
+  const environmentProfile = configService.get<number>('APPLICATION_DEV_ENVIRONMENT');
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
     transform: true,
   }));
-
-  const configService = app.get(ConfigService);
-  const port = configService.get<number>('SERVER_PORT');
 
   const config = new DocumentBuilder()
     .setTitle('Paramazon API')
@@ -27,8 +29,9 @@ async function bootstrap() {
 
   await app.listen(port);
 
-  console.log(`Application is running on: http://localhost:${port}`);
-  console.log(`Swagger is available at: http://localhost:${port}/api`);
+  console.log(`>>> Development environment? ${environmentProfile ? 'yes' : 'no'}`);
+  console.log(`>>> Application running at: http://localhost:${port}`);
+  console.log(`>>> Swagger URI: http://localhost:${port}/api`);
 }
 
 bootstrap();
