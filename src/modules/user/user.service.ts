@@ -85,7 +85,7 @@ export class UserService {
         message: "Usuario deletado com sucesso!",
       }
     } catch (error) {
-      this.logger.error('UserService :: ao persistir desativar usuario ', error.stack);
+      this.logger.error('UserService :: Erro ao desativar usuario ', error.stack);
       throw error;
     }
   };

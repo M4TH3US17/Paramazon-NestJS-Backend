@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Logger, Param, Patch, Post, Query, UsePipes } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Logger, Param, Patch, Post, Query, Res, UsePipes } from "@nestjs/common";
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UserService } from "./user.service";
 import { UserPaginationDTO } from "./dto/response/user.pagination.response";
@@ -18,6 +18,7 @@ export class UserController {
     ) { }
 
     @Get()
+    @HttpCode(HttpStatus.OK)
     @UsePipes(ValidateUserPaginationPipe)
     @ApiOperation({ summary: 'Retorna todos os usuários cadastrados no sistema' })
     @ApiResponse({
@@ -72,7 +73,8 @@ export class UserController {
         return response;
     };
 
-    @Delete('id')
+    @Delete(':id')
+    @HttpCode(HttpStatus.NO_CONTENT)
     @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid ID supplied' })
     @ApiOperation({ summary: 'Deleta um usuario no sistema' })
     @ApiParam({ name: 'id', description: 'ID do usuario a ser deletado', type: Number })

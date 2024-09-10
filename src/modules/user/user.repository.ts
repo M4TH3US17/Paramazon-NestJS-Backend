@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
+import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/database/prisma/prisma.service";
 import { UserPaginationDTO } from "./dto/response/user.pagination.response";
 import { UserRequestDTO } from "./dto/request/user.create.dto";
@@ -65,6 +65,10 @@ export class UserRepository {
 
         } catch (error) {
             this.logger.error(`UserRepository :: Erro ao buscar usuário de ID ${userId}`, error.stack);
+            if (error instanceof NotFoundException) {
+                throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+            };
+
             throw error;
         }
     };
@@ -94,6 +98,10 @@ export class UserRepository {
 
         } catch (error) {
             this.logger.error(`UserRepository :: Erro ao buscar usuário de username=${username}`, error.stack);
+            if (error instanceof NotFoundException) {
+                throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+            }
+
             throw error;
         }
     }
@@ -126,7 +134,7 @@ export class UserRepository {
                 });
 
                 if (existingUser)
-                    throw new ConflictException('Username already exists');
+                    throw new ConflictException(`username "${request.username}" ja esta em uso.`);
 
                 const userSaved = await prisma.user.create({
                     data: {
@@ -148,11 +156,12 @@ export class UserRepository {
             return result;
         } catch (error) {
 
-            if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002')
-                throw new ConflictException('Username already exists');
+            if (error instanceof ConflictException && error.getStatus() === HttpStatus.CONFLICT) {
+                throw new HttpException(`username ${request.username} já está em uso.`, HttpStatus.CONFLICT);
+            }
 
             this.logger.error('UserRepository :: Erro ao salvar usuário', error.stack);
-            throw new InternalServerErrorException('Erro interno ao salvar usuário');
+            throw error;
         }
     }
 
@@ -166,26 +175,25 @@ export class UserRepository {
                 })
             ]);
 
-            if(!entity) {
+            if (!entity) {
                 throw new NotFoundException(`Usuario de ID=${userId} nao encontrado.`)
             }
-    
-            // Verificar se o username já existe
+
             if (request.username && request.username !== entity.username) {
                 this.logger.log(`UserRepository :: Verificando se já existe usuário com username=${request.username}...`);
                 const usernameAlreadyExists = await this.prisma.user.findUnique({
                     where: { username: request.username },
                 });
-    
+
                 if (usernameAlreadyExists) {
                     this.logger.warn(`UserRepository :: Já existe um usuário com username=${request.username}...`);
                     throw new ConflictException(`Usuário com username=${request.username} já existe na base de dados!`);
                 }
             }
-    
+
             this.logger.log(`UserRepository :: Checando a parte de foto do usuario...`);
             let media = undefined;
-    
+
             if (request.photograph) {
                 if (entity.photograph) {
                     this.logger.log(`UserRepository :: Atualizando dados da foto existente com media_id=${entity.photograph.media_id}...`);
@@ -205,55 +213,64 @@ export class UserRepository {
                     };
                 }
             }
-    
+
             const updateData: Prisma.UserUpdateInput = {
                 username: request.username,
                 photograph: media ? { update: media } : undefined,
                 updated_at: new Date(),
             };
-    
+
             const [updatedUser] = await this.prisma.$transaction([
                 this.prisma.user.update({
                     where: {
                         user_id: userId,
                     },
                     data: updateData,
+                    include: { photograph: true }
                 }),
             ]);
-    
+
             this.logger.log(`UserRepository :: Usuário de ID=${userId} atualizado com sucesso. Retornando dados para o service...`);
             return updatedUser;
         } catch (error) {
-            if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002')
-                throw new ConflictException('Esse username ja existe.');
+            if (error instanceof ConflictException && error.getStatus() === HttpStatus.CONFLICT)
+                throw new HttpException(`Username ${request.username} ja existe.`, HttpStatus.CONFLICT);
+
+            if (error instanceof NotFoundException)
+                throw new HttpException(error.message, HttpStatus.NOT_FOUND);
 
             this.logger.error('UserRepository :: Erro ao atualizar usuário', error.stack);
             throw new InternalServerErrorException('Erro ao atualizar usuário');
         }
     }
-    
-    
 
     public async deactivate(userId: number) {
         this.logger.log(`UserRepository :: Buscando usuário de ID=${userId} na base de dados...`);
         try {
             const user = await this.prisma.user.findUnique({
-                where: { user_id: userId, account_status: Status.ACTIVE },
-            });
-    
+                where: {
+                    user_id: userId,
+                    account_status: Status.ACTIVE,
+                },
+            })
+
             if (!user) {
                 this.logger.warn(`UserRepository :: Usuário de ID=${userId} não existe ou não está ativo.`);
                 throw new NotFoundException(`Usuário de ID=${userId} não encontrado ou já está inativo.`);
             }
-    
+
             const updatedUser = await this.prisma.user.update({
                 where: { user_id: userId },
                 data: { account_status: Status.INACTIVE }
             });
-    
+
             this.logger.log(`UserRepository :: Usuário de ID=${userId} desativado com sucesso.`);
             return updatedUser;
         } catch (error) {
+
+            if (error instanceof NotFoundException)
+                throw new HttpException(error.message, HttpStatus.NOT_FOUND)
+
             this.logger.error('UserRepository :: Erro ao desativar usuário', error.stack);
             throw error;
         }
