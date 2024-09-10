@@ -1,12 +1,12 @@
-import { IsIn, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsOptional, IsString, Matches } from 'class-validator';
 
 export class UserPaginationDTO {
-  @IsOptional()
   @IsString()
+  @Matches(/^\d+$/, { message: 'Page must be a number' })
   readonly page?: number;
 
-  @IsOptional()
   @IsString()
+  @Matches(/^\d+$/, { message: 'Page must be a number' })
   readonly size?: number;
 
   @IsOptional()
