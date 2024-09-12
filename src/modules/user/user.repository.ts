@@ -3,10 +3,6 @@ import { PrismaService } from "src/database/prisma/prisma.service";
 import { UserPaginationDTO } from "./dto/response/user.pagination.response";
 import { UserRequestDTO } from "./dto/request/user.create.dto";
 import { Status, UserRole } from "./enums/user.enum";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { MediaEntity, UserEntity } from "./dto/response/user.dto";
-import { Prisma } from "@prisma/client";
-import { UserUpdateRequestDTO } from "./dto/request/update.personal.data.dto";
 
 @Injectable()
 export class UserRepository {
