@@ -9,7 +9,7 @@ import { UserResponse } from "./dto/response/user.dto";
 import { Response } from "src/utils/api.response";
 
 @ApiTags('usuarios')
-@Controller("users")
+@Controller(process.env.API_VERSION_PATH + "users")
 export class UserController {
 
     private readonly logger = new Logger(UserController.name);

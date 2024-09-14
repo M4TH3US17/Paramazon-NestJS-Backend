@@ -1,19 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { MediaType } from "@prisma/client";
 import { Type } from "class-transformer";
-import { IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
-
-export class MediaUpdateRequestDTO {
-    @IsString()
-    @IsNotEmpty({ message: "source field cannot be empty!" })
-    @ApiProperty({ description: 'The source URL or path of the media', example: 'http://example.com/image.jpg' })
-    source: string;
-
-    @IsOptional()
-    @IsEnum(MediaType, { message: 'media_type must be a valid enum value' })
-    @ApiPropertyOptional({ description: 'The type of media', enum: MediaType })
-    media_type?: MediaType;
-}
+import { IsOptional, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
+import { MediaUpdateRequestDTO } from "src/modules/medias/dto/request/update.data.dto";
 
 export class UserUpdateRequestDTO {
     @IsOptional()

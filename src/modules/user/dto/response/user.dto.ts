@@ -1,20 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { MediaType } from "../../enums/media.enums";
 import { Status, UserRole } from "../../enums/user.enum";
-
-export class MediaResponse {
-    @ApiProperty({ description: 'The unique identifier for the media', example: 1 })
-    media_id: number;
-
-    @ApiProperty({ description: 'The source URL or path of the media', example: 'http://example.com/image.jpg' })
-    source: string;
-
-    @ApiProperty({ description: 'The creation date of the media', example: '2024-09-09T02:31:05.109Z' })
-    created_at: Date;
-
-    @ApiProperty({ description: 'The last update date of the media', example: '2024-09-09T02:31:05.109Z' })
-    updated_at: Date;
-}
+import { MediaResponse } from "src/modules/medias/dto/response/media.dto";
 
 export class UserResponse {
     @ApiProperty({ description: 'The unique identifier for the user', example: 1 })
@@ -37,11 +23,6 @@ export class UserResponse {
 
     @ApiProperty({ description: 'Details of the photograph media associated with the user', type: MediaResponse })
     photograph: MediaResponse;
-}
-
-export class MediaEntity extends MediaResponse {
-    @ApiProperty({ description: 'The type of media', enum: MediaType })
-    media_type: MediaType;
 }
 
 export class UserEntity extends UserResponse {

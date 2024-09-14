@@ -1,0 +1,34 @@
+import { InternalServerErrorException } from "@nestjs/common";
+import { MediaResponse } from "./dto/response/media.dto";
+
+export class MediaMapper {
+
+    constructor() { }
+
+    public static parseEntitiesToDTO(entities: any[]): MediaResponse[] {
+        try {
+            return entities.map(entity => this.parseToDTO(entity));
+        } catch (error) {
+            console.error('MediaMapper :: Erro ao converter entidades para DTOs', error.stack);
+            throw new InternalServerErrorException('Erro ao converter entidades para DTOs');
+        }
+    }
+
+    public static parseToDTO(entity: any): MediaResponse {
+        try {
+            const dto: MediaResponse = {
+                media_id: Number(entity.media_id),
+                source: entity.source,
+                //media_type: entity.media_type,
+                created_at: entity.created_at,
+                updated_at: entity.updated_at,
+            };
+
+            return dto;
+        } catch (error) {
+            console.error('MediaMapper :: Erro ao converter entidade para DTO', error.stack);
+            throw new InternalServerErrorException('Erro ao converter entidade para DTO');
+        }
+    }
+
+}

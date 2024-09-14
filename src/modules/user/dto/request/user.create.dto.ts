@@ -1,19 +1,7 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
-import { MediaType } from "../../enums/media.enums";
 import { Type } from "class-transformer";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-
-export class MediaRequestDTO {
-  @IsString()
-  @IsNotEmpty({ message: "source field cannot be empty!" })
-  @ApiProperty({ description: 'The source URL or path of the media', example: 'http://example.com/image.jpg' })
-  source: string;
-
-  @IsOptional()
-  @IsEnum(MediaType, { message: 'media_type must be a valid enum value' })
-  @ApiPropertyOptional({ description: 'The type of media', enum: MediaType })
-  media_type?: MediaType;
-}
+import { MediaRequestDTO } from "src/modules/medias/dto/request/media.create.dto";
 
 export class UserRequestDTO {
   @IsString()
@@ -29,6 +17,8 @@ export class UserRequestDTO {
   @IsNotEmpty({ message: "Password field cannot be empty!" })
   @ApiProperty({ description: 'The password of the user', example: 'password123' })
   password: string;
+
+ // repeatPassword: string;
 
   @IsOptional()
   @ValidateNested()
