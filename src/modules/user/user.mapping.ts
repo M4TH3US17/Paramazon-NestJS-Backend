@@ -5,6 +5,13 @@ export class UserMapper {
 
     constructor(){}
 
+    /**
+     * Converte uma lista de entidades para uma lista de DTOs de usuário.
+     * 
+     * @param entities - Array de entidades a serem convertidas.
+     * @returns Array de DTOs de usuário.
+     * @throws InternalServerErrorException se ocorrer um erro durante a conversão.
+     */
     public static parseEntitiesToDTO(entities: any[]): UserResponse[] {
         try {
             return entities.map(entity => this.parseToDTO(entity));
@@ -14,6 +21,13 @@ export class UserMapper {
         }
     }
 
+  /**
+   * Converte uma entidade para um DTO de usuário.
+   * 
+   * @param entity - Entidade a ser convertida.
+   * @returns DTO de usuário.
+   * @throws InternalServerErrorException se ocorrer um erro durante a conversão.
+   */
     public static parseToDTO(entity: any): UserResponse {
         try {
             const dto: UserResponse = {

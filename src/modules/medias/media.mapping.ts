@@ -5,6 +5,13 @@ export class MediaMapper {
 
     constructor() { }
 
+  /**
+   * Converte uma lista de entidades para uma lista de DTOs de mídia.
+   * 
+   * @param entities - Array de entidades a serem convertidas para DTOs.
+   * @returns Array de DTOs de mídia.
+   * @throws InternalServerErrorException Se ocorrer um erro durante a conversão.
+   */
     public static parseEntitiesToDTO(entities: any[]): MediaResponse[] {
         try {
             return entities.map(entity => this.parseToDTO(entity));
@@ -14,6 +21,13 @@ export class MediaMapper {
         }
     }
 
+  /**
+   * Converte uma única entidade para um DTO de mídia.
+   * 
+   * @param entity - Entidade a ser convertida para DTO.
+   * @returns DTO de mídia.
+   * @throws InternalServerErrorException Se ocorrer um erro durante a conversão.
+   */
     public static parseToDTO(entity: any): MediaResponse {
         try {
             const dto: MediaResponse = {
