@@ -1,24 +1,5 @@
-import { IsIn, IsOptional, IsString, Matches } from 'class-validator';
+import { PartialType } from "@nestjs/mapped-types";
+import { PaginationDefaultDTO } from "src/utils/pagination.data";
 
-export class UserPaginationDTO {
-  @IsString()
-  @Matches(/^\d+$/, { message: 'Page must be a number' })
-  readonly page?: number;
-
-  @IsString()
-  @Matches(/^\d+$/, { message: 'Page must be a number' })
-  readonly size?: number;
-
-  @IsOptional()
-  @IsString()
-  readonly sort?: string;
-
-  @IsOptional()
-  @IsString()
-  @IsIn(['asc', 'desc'])
-  readonly order?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly search?: string;
-}
+export class UserPaginationDTO extends PartialType(PaginationDefaultDTO) {
+};

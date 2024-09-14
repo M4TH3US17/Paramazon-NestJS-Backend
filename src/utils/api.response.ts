@@ -8,4 +8,4 @@ export class Response {
             this.data = init.data;
         }
     }
-}
+};

@@ -22,20 +22,13 @@ export class MediaController {
     @HttpCode(HttpStatus.OK)
     @UsePipes(ValidateMediaPaginationPipe)
     @ApiOperation({ summary: 'Retorna todos os mídias cadastrados no sistema' })
-    @ApiResponse({
-        status: HttpStatus.OK,
-        description: 'Lista de mídias encontradas',
-        type: [MediaResponse]
-    })
-    @ApiResponse({
-        status: HttpStatus.BAD_REQUEST,
-        description: 'Parâmetros de consulta inválidos'
-    })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Lista de mídias encontradas', type: [MediaResponse]})
+    @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Parâmetros de consulta inválidos' })
     public async findAll(@Query() pagination: MediaPaginationDTO): Promise<Response> {
         this.logger.log('MediaController :: Iniciando processo de busca de todas as mídias cadastradas...');
         const response = await this.service.findAll(pagination);
         return response;
-    }
+    };
 
     @Get(':id')
     @ApiOperation({ summary: 'Retorna uma mídia pelo ID' })
@@ -47,7 +40,7 @@ export class MediaController {
         this.logger.log(`MediaController :: Iniciando processo de busca da mídia de ID ${mediaId}...`);
         const response = await this.service.findOne(mediaId);
         return response;
-    }
+    };
 
     @Post()
     @ApiOperation({ summary: 'Cadastra uma nova mídia no sistema' })
@@ -59,7 +52,7 @@ export class MediaController {
         this.logger.log('MediaController :: Iniciando processo de persistência de uma nova mídia...');
         const response = await this.service.create(request);
         return response;
-    }
+    };
 
     @Patch(':id')
     @ApiOperation({ summary: 'Atualiza uma mídia no sistema' })
@@ -72,7 +65,7 @@ export class MediaController {
         this.logger.log(`MediaController :: Iniciando processo de atualização da mídia de ID ${mediaId}...`);
         const response = await this.service.update(mediaId, request);
         return response;
-    }
+    };
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
@@ -85,6 +78,6 @@ export class MediaController {
         this.logger.log(`MediaController :: Iniciando processo de desativação da mídia de ID ${mediaId}...`);
         const response = await this.service.delete(mediaId);
         return response;
-    }
+    };
 
 }

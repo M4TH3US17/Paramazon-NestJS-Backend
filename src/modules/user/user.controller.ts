@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Logger, Param, Patch, Post, Query, Res, UsePipes } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Logger, Param, Patch, Post, Query, UsePipes } from "@nestjs/common";
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UserService } from "./user.service";
 import { UserPaginationDTO } from "./dto/response/user.pagination.response";
@@ -22,15 +22,8 @@ export class UserController {
     @HttpCode(HttpStatus.OK)
     @UsePipes(ValidateUserPaginationPipe)
     @ApiOperation({ summary: 'Retorna todos os usuários cadastrados no sistema' })
-    @ApiResponse({
-        status: HttpStatus.OK,
-        description: 'Lista de usuários encontrados',
-        type: [UserResponse]
-    })
-    @ApiResponse({
-        status: HttpStatus.BAD_REQUEST,
-        description: 'Parâmetros de consulta inválidos'
-    })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Lista de usuários encontrados', type: [UserResponse] })
+    @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Parâmetros de consulta inválidos' })
     public async findAll(@Query() pagination: UserPaginationDTO): Promise<Response> {
         this.logger.log(`UserController :: Iniciando processo de busca de todos os usuarios cadastrados...`);
         const response = this.service.findAll(pagination);

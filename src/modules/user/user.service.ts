@@ -1,4 +1,4 @@
-import { ConflictException, HttpException, HttpStatus, Injectable, Logger, NotFoundException, Res } from "@nestjs/common";
+import { BadRequestException, ConflictException, HttpException, HttpStatus, Injectable, Logger, NotFoundException, Res } from "@nestjs/common";
 import { UserPaginationDTO } from "./dto/response/user.pagination.response";
 import { UserRepository } from "./user.repository";
 import { UserRequestDTO } from "./dto/request/user.create.dto";
@@ -85,6 +85,12 @@ export class UserService {
       this.logger.log(`UserService :: Verificando se existe usuario cadastrado como username=${request.username} ...`);
       const existingUser = await this.repository.findUserByUsername(request.username);
 
+      this.logger.log(`UserService :: Verificando se as senhas informadas coincidem ...`);
+      const passwordsMatchIsInvalid = (request.password.toUpperCase().trim() !== request.repeatPassword.toUpperCase().trim());
+
+      if (passwordsMatchIsInvalid)
+        throw new BadRequestException("As senhas informadas não coincidem.");
+
       if (existingUser)
         throw new ConflictException(`username "${request.username}" ja esta em uso.`);
 
@@ -96,6 +102,9 @@ export class UserService {
       })
     } catch (error) {
       this.logger.error('UserService :: ao persistir usuario ', error.stack);
+
+      if (error instanceof BadRequestException)
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
       if (error instanceof ConflictException && error.getStatus() === HttpStatus.CONFLICT)
         throw new HttpException(`username ${request.username} já está em uso.`, HttpStatus.CONFLICT);
@@ -171,13 +180,13 @@ export class UserService {
 
       userFound.updated_at = new Date();
       userFound.username = request.username,
-      userFound.photograph = media;
+        userFound.photograph = media;
 
       const userUpdated = await this.repository.update(userId, userFound);
 
-      return new Response({ 
-        message: 'Usuario atualizado com sucesso!', 
-        data: UserMapper.parseToDTO(userUpdated) 
+      return new Response({
+        message: 'Usuario atualizado com sucesso!',
+        data: UserMapper.parseToDTO(userUpdated)
       });
 
     } catch (error) {
